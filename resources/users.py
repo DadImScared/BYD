@@ -2,7 +2,7 @@ import datetime
 import json
 import config
 from flask import jsonify, Blueprint, abort, make_response, g, request
-from resources.schemas import PostRequestSchema, FeeSchema
+from resources.schemas import PostRequestSchema
 import models
 from flask_restful import (Resource, Api, reqparse,
                                inputs, fields, marshal,
@@ -16,10 +16,11 @@ class CreateAppointment(Resource):
 
     def post(self):
         """Post method of CreateAppointment class"""
+
         json_data = request.get_json()
         schema = PostRequestSchema()
-        fee_schema = FeeSchema()
         data, errors = schema.load(json_data)
+
         if errors:
             return make_response(jsonify({
                 "errors": errors
@@ -44,11 +45,9 @@ class CreateAppointment(Resource):
         charge = stripe.Charge.create(
             amount=200,
             currency="usd",
-            source="tok_visa_debit",
-            description="Payment for BillYourDoctor.com"
+            source=data["token"],
+            description="Fee for BillYourDoctor.com"
         )
-        # charge_info, charge_errors = fee_schema.dump(charge)
-        # fee, created_fee = models.Fee.get_or_create(appointment=appointment, defaults={**charge_info})
         models.Fee.get_or_create(appointment=appointment, defaults={"charge_info": charge})
         # send payment confirmation to person email
         return 200

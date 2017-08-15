@@ -45,21 +45,4 @@ class PostRequestSchema(Schema):
     person = fields.Nested(PersonSchema, required=True)
     doctor = fields.Nested(PersonSchema, exclude=('salary',), required=True)
     appointment = fields.Nested(AppointmentSchema, required=True)
-
-
-class FeeSchema(Schema):
-    charge_id = fields.String(attribute="id")
-    created = fields.Method('epoch_to_iso')
-    amount = fields.Integer()
-    currency = fields.String()
-    balance_transaction = fields.String()
-
-    def epoch_to_iso(self, charge):
-        """Convert epoch time from charge object to ISO 8601
-
-        :param charge: Charge object
-        :return: ISO 8601 datetime object
-        """
-        epoch = charge.created
-        new_dt = datetime.datetime.utcfromtimestamp(epoch).isoformat()
-        return new_dt
+    token = fields.String(required=True, error="Token required")
