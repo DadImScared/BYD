@@ -42,15 +42,19 @@ class CreateAppointment(Resource):
             doctor=doctor,
             **data["appointment"]
         )
-        charge = stripe.Charge.create(
-            amount=200,
-            currency="usd",
-            source=data["token"],
-            description="Fee for BillYourDoctor.com"
-        )
-        models.Fee.get_or_create(appointment=appointment, defaults={"charge_info": charge})
+        try:
+            charge = stripe.Charge.create(
+                amount=200,
+                currency="usd",
+                source=data["token"],
+                description="Fee for billyourdr.com"
+            )
+        except stripe.InvalidRequestError:
+            return make_response(jsonify({"message": "Invalid stripe token"}), 400)
+        else:
+            models.Fee.get_or_create(appointment=appointment, defaults={"charge_info": charge})
         # send payment confirmation to person email
-        return 200
+        return make_response(jsonify({"message": "success"}), 200)
 
 
 user_api = Blueprint('resources.users', __name__)
