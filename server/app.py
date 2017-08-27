@@ -3,16 +3,20 @@ from flask_sslify import SSLify
 import os
 from server.settings import BaseConfig
 from server.blueprints import register_blueprints
+from server.extensions import mail
 
 server_dir = os.path.dirname(os.path.realpath(__file__))
 
 
-app = Flask(__name__, static_folder='{}{}static'.format(server_dir, os.path.sep))
+app = Flask(__name__,
+            static_folder='{}{}static'.format(server_dir, os.path.sep),
+            template_folder='{}{}templates'.format(server_dir, os.path.sep)
+            )
 
 
-# @app.errorhandler(404)
-# def page_not_found(e):
-#     return app.send_static_file('index.html')
+@app.errorhandler(404)
+def page_not_found(e):
+    return app.send_static_file('index.html')
 
 
 @app.route('/')
@@ -34,3 +38,4 @@ def create_app(config=BaseConfig):
 def register_extensions():
     if not BaseConfig.DEBUG:
         SSLify(app)
+    mail.init_app(app)

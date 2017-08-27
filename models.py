@@ -1,4 +1,5 @@
 import os
+import uuid
 import datetime
 from peewee import *
 from playhouse.postgres_ext import PostgresqlExtDatabase, JSONField
@@ -10,7 +11,6 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 DATABASE = SqliteDatabase('{}{}people.db'.format(dir_path, os.path.sep))
 
 psql_db = PostgresqlExtDatabase('my_database', user=config.PGU, password=config.PGP, register_hstore=False)
-
 
 
 class BasePost(Model):
@@ -57,8 +57,9 @@ class Appointment(BaseModel):
     doctor = ForeignKeyField(rel_model=Doctor)
     appointment_time = DateTimeField()
     meet_time = DateTimeField()
+    appointment_id = CharField(unique=True, default=uuid.uuid4)
 
-    #: Status is either resolved or unresolved
+    #: Status default unresolved
     status = CharField(default='unresolved')
 
 
