@@ -1,0 +1,4 @@
+Thank you for using Bill Your Doctor.
+
+To see the status of your entry visit
+http://www.billyourdr.com/entry/{{ entry_id }}
