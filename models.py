@@ -10,7 +10,13 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 DATABASE = SqliteDatabase('{}{}people.db'.format(dir_path, os.path.sep))
 
-psql_db = PostgresqlExtDatabase('my_database', user=config.PGU, password=config.PGP, register_hstore=False)
+psql_db = PostgresqlExtDatabase('my_database',
+                                user=config.PGU,
+                                password=config.PGP,
+                                register_hstore=False,
+                                host=config.HOST,
+                                port=config.PORT
+                                )
 
 
 class BasePost(Model):
