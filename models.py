@@ -55,9 +55,9 @@ class Appointment(BaseModel):
     """Appointment model for database"""
     person = ForeignKeyField(rel_model=User)
     doctor = ForeignKeyField(rel_model=Doctor)
-    appointment_time = DateTimeField()
-    meet_time = DateTimeField()
-    appointment_id = CharField(unique=True, default=uuid.uuid4)
+    appointment_time = DateTimeField(formats="%Y-%m-%d %I:%M %p")
+    meet_time = DateTimeField(formats="%Y-%m-%d %I:%M %p")
+    appointment_id = UUIDField(unique=True, default=uuid.uuid4)
 
     #: Status default unresolved
     status = CharField(default='unresolved')

@@ -49,10 +49,17 @@ class CreateAppointment(Resource):
                 email=data["doctor"]["email"],
                 defaults={**data["doctor"]}
             )
+            apt_data = data["appointment"]
+            meet_time = datetime.datetime.strptime("{} {}".format(apt_data["appointment_date"], apt_data["meet_time"]),
+                                                   "%Y-%m-%d %I:%M %p")
+            appointment_time = datetime.datetime.strptime("{} {}".format(
+                apt_data["appointment_date"], apt_data["appointment_time"]), "%Y-%m-%d %I:%M %p"
+            )
             appointment, _ = models.Appointment.get_or_create(
                 person=person,
                 doctor=doctor,
-                **data["appointment"]
+                meet_time=meet_time,
+                appointment_time=appointment_time
             )
             models.Fee.get_or_create(appointment=appointment, defaults={"charge_info": charge})
         # send payment confirmation to person email

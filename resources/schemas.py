@@ -1,5 +1,17 @@
-from marshmallow import Schema, fields, validate, pre_load
+from marshmallow import Schema, fields, validate, pre_load, ValidationError
 import datetime
+
+
+def validate_time(time_str):
+    """Validates a time str is in the format of hh:mm am/pm
+
+    :param time_str: Time string in the format of hh:mm am/pm
+    :raises ValidationError:
+    """
+    try:
+        valid_time = datetime.datetime.strptime(time_str, "%I:%M %p")
+    except ValueError:
+        raise ValidationError("Invalid time please format time like hh:mm am/pm")
 
 
 class PersonSchema(Schema):
@@ -36,8 +48,10 @@ class PersonSchema(Schema):
 
 
 class AppointmentSchema(Schema):
-    appointmentTime = fields.DateTime(error="Not a valid time", attribute='appointment_time', required=True)
-    meetTime = fields.DateTime(error="Not a valid time", attribute="meet_time", required=True)
+    appointmentDate = fields.Date(error="Not a valid date.", attribute="appointment_date", required=True)
+    appointmentTime = fields.String(error="Not a valid time", validate=validate_time,
+                                    attribute='appointment_time', required=True)
+    meetTime = fields.String(error="Not a valid time", validate=validate_time, attribute="meet_time", required=True)
     status = fields.String(default="unresolved")
 
 
