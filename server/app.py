@@ -21,14 +21,12 @@ def page_not_found(e):
 
 
 @app.route('/')
+@app.route('/assets/<resource>')
 @app.route('/<resource>')
 def hello_world(resource=None):
-    print(resource)
     if os.path.isfile('{0}{1}static{1}{2}'.format(server_dir, os.path.sep, resource)):
         return app.send_static_file('{}'.format(resource))
     return app.send_static_file('index.html')
-
-
 
 
 register_blueprints(app)
